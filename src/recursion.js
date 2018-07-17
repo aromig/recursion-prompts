@@ -225,10 +225,12 @@ var countKeysInObj = function(obj, key) {
 var countValuesInObj = function(obj, value) {
     let count = 0;
     for (let prop in obj) {
-        if (obj[prop] === value) count++;
         if (obj.hasOwnProperty(prop)) {
             if (typeof obj[prop] == 'object') {
                 count += countValuesInObj(obj[prop], value);
+            } else {
+                if (obj[prop] === value)
+                    count++;
             }
         }
     }
@@ -314,16 +316,46 @@ var capitalizeFirst = function(array) {
 // };
 // nestedEvenSum(obj1); // 10
 var nestedEvenSum = function(obj) {
+    let sum = 0;
+    for (let prop in obj) {
+        let val = obj[prop];
+        if (obj.hasOwnProperty(prop)) {
+            if (typeof obj[prop] == 'object') {
+                sum += nestedEvenSum(val);
+            } else {
+                if (val % 2 === 0)
+                    sum += val;
+            }
+        }
+    }
+    return sum;
 };
 
 // 30. Flatten an array containing nested arrays.
 // flatten([1,[2],[3,[[4]]],5]); // [1,2,3,4,5]
 var flatten = function(array) {
+    let flat = [];
+    
+    array.forEach(item => flat.push(...Array.isArray(item) ? flatten(item) : [ item ]) );
+
+    return flat;
 };
 
 // 31. Given a string, return an object containing tallies of each letter.
 // letterTally('potato'); // {p:1, o:2, t:2, a:1}
-var letterTally = function(str, obj) {
+var letterTally = function(str, obj={}) { // had to add the default parameter value for obj to pass
+    let len = str.length;
+    let current = str[0];
+
+    if (len === 0) {
+        return obj;
+    } else if (current in obj) {
+        obj[current]++;
+    } else {
+        obj[current] = 1;
+    }
+
+    return letterTally(str.slice(1), obj);
 };
 
 // 32. Eliminate consecutive duplicates in a list. If the list contains repeated
