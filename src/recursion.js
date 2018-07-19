@@ -364,18 +364,35 @@ var letterTally = function(str, obj={}) { // had to add the default parameter va
 // compress([1,2,2,3,4,4,5,5,5]) // [1,2,3,4,5]
 // compress([1,2,2,3,4,4,2,5,5,5,4,4]) // [1,2,3,4,2,5,4]
 var compress = function(list) {
+    if (!list.length) return [];
+
+    let [head, ...tail] = list;
+    let l = compress(tail);
+    return l[0] === head ? l : [head, ...l];
 };
 
 // 33. Augument every element in a list with a new value where each element is an array
 // itself.
 // augmentElements([[],[3],[7]], 5); // [[5],[3,5],[7,5]]
 var augmentElements = function(array, aug) {
+    if (!array.length) return array;
+
+    let [head, ...tail] = array;
+    let arr = augmentElements(tail, aug);
+
+    return [head.concat([aug])].concat(arr);
 };
 
 // 34. Reduce a series of zeroes to a single 0.
 // minimizeZeroes([2,0,0,0,1,4]) // [2,0,1,4]
 // minimizeZeroes([2,0,0,0,1,0,0,4]) // [2,0,1,0,4]
 var minimizeZeroes = function(array) {
+    if (!array.length) return array;
+
+    let [head, ...tail] = array;
+    let arr = minimizeZeroes(tail);
+
+    return arr[0] === 0 && head === 0 ? arr : [head].concat(arr);
 };
 
 // 35. Alternate the numbers in an array between positive and negative regardless of
@@ -383,14 +400,33 @@ var minimizeZeroes = function(array) {
 // alternateSign([2,7,8,3,1,4]) // [2,-7,8,-3,1,-4]
 // alternateSign([-2,-7,8,3,-1,4]) // [2,-7,8,-3,1,-4]
 var alternateSign = function(array) {
+    if (!array.length) return array;
+
+    let [first, second, ...tail] = array;
+    let arr = alternateSign(tail);
+    
+    if (first < 0) first = -first;
+    if (second > 0) second = -second;
+
+    return [first, second].concat(arr);
 };
 
 // 36. Given a string, return a string with digits converted to their word equivalent.
 // Assume all numbers are single digits (less than 10).
 // numToText("I have 5 dogs and 6 ponies"); // "I have five dogs and six ponies"
 var numToText = function(str) {
-};
+    if (!str.length) return str;
 
+    const num = [
+        'zero', 'one', 'two', 'three', 'four', 'five',
+        'six', 'seven', 'eight', 'nine'
+    ];
+    let [char, ...tail] = str;
+    let words = numToText(tail);
+
+    char = char.match(/[a-z\s]/i) ? char : num[Number(char)];
+    return `${char}${words}`;
+};
 
 // *** EXTRA CREDIT ***
 
